@@ -1,4 +1,4 @@
-module github.com/RoLex/go-dcpp
+module github.com/rolex/go-dcpp
 
 go 1.12
 
