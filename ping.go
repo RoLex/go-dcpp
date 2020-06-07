@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	dc "github.com/RoLex/go-dc"
-	adcp "github.com/RoLex/go-dc/adc"
-	nmdcp "github.com/RoLex/go-dc/nmdc"
-	"github.com/RoLex/go-dcpp/adc"
-	"github.com/RoLex/go-dcpp/nmdc"
+	dc "github.com/direct-connect/go-dc"
+	adcp "github.com/direct-connect/go-dc/adc"
+	nmdcp "github.com/direct-connect/go-dc/nmdc"
+	"github.com/direct-connect/go-dcpp/adc"
+	"github.com/direct-connect/go-dcpp/nmdc"
 )
 
 type PingConfig = adc.PingConfig
