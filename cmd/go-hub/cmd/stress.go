@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/direct-connect/go-dcpp/nmdc/client"
+	"github.com/RoLex/go-dcpp/nmdc/client"
 )
 
 var stressCmd = &cobra.Command{

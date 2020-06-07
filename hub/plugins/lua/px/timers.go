@@ -5,7 +5,7 @@ import (
 	"time"
 
 	lua "github.com/Shopify/go-lua"
-	hlua "github.com/direct-connect/go-dcpp/hub/plugins/lua"
+	hlua "github.com/RoLex/go-dcpp/hub/plugins/lua"
 )
 
 // http://wiki.ptokax.org/doku.php?id=luaapi:px_tmrman

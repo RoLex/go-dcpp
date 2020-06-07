@@ -15,7 +15,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/direct-connect/go-dc/keyprint"
+	"github.com/RoLex/go-dc/keyprint"
 )
 
 type TLSConfig struct {

@@ -1,8 +1,8 @@
 package adc
 
 import (
-	"github.com/direct-connect/go-dc/adc/types"
-	"github.com/direct-connect/go-dc/tiger"
+	"github.com/RoLex/go-dc/adc/types"
+	"github.com/RoLex/go-dc/tiger"
 )
 
 type SID = types.SID

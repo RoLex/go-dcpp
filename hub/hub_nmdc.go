@@ -15,8 +15,8 @@ import (
 
 	"golang.org/x/text/encoding"
 
-	nmdcp "github.com/direct-connect/go-dc/nmdc"
-	"github.com/direct-connect/go-dcpp/nmdc"
+	nmdcp "github.com/RoLex/go-dc/nmdc"
+	"github.com/RoLex/go-dcpp/nmdc"
 )
 
 var (

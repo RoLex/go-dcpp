@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/direct-connect/go-dc/adc"
-	"github.com/direct-connect/go-dc/adc/types"
+	"github.com/RoLex/go-dc/adc"
+	"github.com/RoLex/go-dc/adc/types"
 )
 
 type PingHubInfo struct {
@@ -42,7 +42,7 @@ func Ping(ctx context.Context, addr string, conf PingConfig) (*PingHubInfo, erro
 
 		// TODO: some hubs will stop the handshake after sending the hub info
 		//       if this extension is specified
-		//adc.FeaPING: true,
+		adc.FeaPING: true,
 
 		adc.FeaUCMD: true,
 		adc.FeaUCM0: true,

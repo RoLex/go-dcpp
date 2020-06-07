@@ -15,7 +15,7 @@ import (
 
 	lua "github.com/Shopify/go-lua"
 
-	"github.com/direct-connect/go-dcpp/hub"
+	"github.com/RoLex/go-dcpp/hub"
 )
 
 const apiVersion = "0.1.0"

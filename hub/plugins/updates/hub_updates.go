@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/direct-connect/go-dcpp/hub"
-	"github.com/direct-connect/go-dcpp/internal/safe"
-	"github.com/direct-connect/go-dcpp/version"
+	"github.com/RoLex/go-dcpp/hub"
+	"github.com/RoLex/go-dcpp/internal/safe"
+	"github.com/RoLex/go-dcpp/version"
 )
 
 const (

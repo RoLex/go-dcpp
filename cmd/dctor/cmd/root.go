@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cretz/bine/tor"
-	"github.com/direct-connect/go-dcpp/adc"
+	"github.com/RoLex/go-dcpp/adc"
 	ltor "github.com/ipsn/go-libtor"
 )
 

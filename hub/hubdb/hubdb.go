@@ -8,7 +8,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/direct-connect/go-dcpp/hub"
+	"github.com/RoLex/go-dcpp/hub"
 
 	_ "github.com/hidal-go/hidalgo/kv/all"
 

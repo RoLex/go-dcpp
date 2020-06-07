@@ -14,9 +14,9 @@ import (
 
 	"golang.org/x/text/encoding"
 
-	"github.com/direct-connect/go-dc/keyprint"
-	"github.com/direct-connect/go-dc/keyprint/tlskp"
-	"github.com/direct-connect/go-dc/nmdc"
+	"github.com/RoLex/go-dc/keyprint"
+	"github.com/RoLex/go-dc/keyprint/tlskp"
+	"github.com/RoLex/go-dc/nmdc"
 )
 
 var (

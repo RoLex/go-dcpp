@@ -1,8 +1,8 @@
 package px
 
 import (
-	"github.com/direct-connect/go-dcpp/hub"
-	hlua "github.com/direct-connect/go-dcpp/hub/plugins/lua"
+	"github.com/RoLex/go-dcpp/hub"
+	hlua "github.com/RoLex/go-dcpp/hub/plugins/lua"
 
 	lua "github.com/Shopify/go-lua"
 )

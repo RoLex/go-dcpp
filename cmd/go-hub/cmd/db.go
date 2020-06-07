@@ -4,8 +4,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/direct-connect/go-dcpp/hub"
-	"github.com/direct-connect/go-dcpp/hub/hubdb"
+	"github.com/RoLex/go-dcpp/hub"
+	"github.com/RoLex/go-dcpp/hub/hubdb"
 )
 
 var hubDB hub.Database

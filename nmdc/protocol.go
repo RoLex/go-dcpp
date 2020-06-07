@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/direct-connect/go-dc/nmdc"
+	"github.com/RoLex/go-dc/nmdc"
 )
 
 func (c *Conn) SendClientHandshake(deadline time.Time, ext ...string) (*nmdc.Lock, error) {

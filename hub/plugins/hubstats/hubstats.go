@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/direct-connect/go-dcpp/hub"
+	"github.com/RoLex/go-dcpp/hub"
 )
 
 func init() {

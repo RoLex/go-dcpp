@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/direct-connect/go-dcpp/cmd/dctor/cmd"
+	"github.com/RoLex/go-dcpp/cmd/dctor/cmd"
 )
 
 func main() {

@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	adcp "github.com/direct-connect/go-dc/adc"
-	nmdcp "github.com/direct-connect/go-dc/nmdc"
+	adcp "github.com/RoLex/go-dc/adc"
+	nmdcp "github.com/RoLex/go-dc/nmdc"
 )
 
 var Debug bool

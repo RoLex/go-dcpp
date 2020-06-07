@@ -18,7 +18,7 @@ go get -d -v ./...
 # When building from the gohub repository, just copy it in
 copy . .
 # When building from outside the gohub repository, grab the source
-#RUN git clone --depth=1 https://github.com/direct-connect/go-dcpp.git .
+#RUN git clone --depth=1 https://github.com/RoLex/go-dcpp.git .
 
 # Get dependencies
 RUN \
