@@ -9,7 +9,7 @@ import (
 	"time"
 
 	dc "github.com/direct-connect/go-dc"
-	adcp "github.com/direct-connect/go-dc/adc"
+	adcp "github.com/RoLex/go-dc/adc"
 	nmdcp "github.com/direct-connect/go-dc/nmdc"
 	"github.com/direct-connect/go-dcpp/adc"
 	"github.com/direct-connect/go-dcpp/nmdc"
@@ -148,6 +148,9 @@ func Ping(ctx context.Context, addr string, conf *PingConfig) (*HubInfo, error) 
 			UsersLimit: int(hub.UsersLimit),
 			MinSlots:   int(hub.MinSlots),
 			MinShare:   uint64(hub.MinShare),
+			MaxHubsUser: int(hub.MaxHubsUser),
+			MaxHubsReg:  int(hub.MaxHubsReg),
+			MaxHubsOp:  int(hub.MaxHubsOp),
 			Server: &Software{
 				Name:    hub.Application,
 				Version: hub.Version,
@@ -209,6 +212,9 @@ type HubInfo struct {
 	UsersLimit int      `json:"userlimit,omitempty" xml:"UserLimit,attr,omitempty"`
 	MinSlots   int      `json:"minslots,omitempty" xml:"MinSlots,attr,omitempty"`
 	MinShare  uint64    `json:"minshare,omitempty" xml:"MinShare,attr,omitempty"`
+	MaxHubsUser int     `json:"maxhubsuse,omitempty" xml:"MaxHubsUse,attr,omitempty"`
+	MaxHubsReg  int     `json:"maxhubsreg,omitempty" xml:"MaxHubsReg,attr,omitempty"`
+	MaxHubsOp   int     `json:"maxhubsop,omitempty" xml:"MaxHubsOp,attr,omitempty"`
 	UserList  []HubUser `json:"userlist,omitempty" xml:"User,attr,omitempty"`
 }
 
