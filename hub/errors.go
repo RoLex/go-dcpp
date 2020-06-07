@@ -8,7 +8,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/RoLex/go-dc/nmdc"
+	"github.com/direct-connect/go-dc/nmdc"
 )
 
 var (

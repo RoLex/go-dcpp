@@ -15,7 +15,7 @@ import (
 	"github.com/cretz/bine/tor"
 	ltor "github.com/ipsn/go-libtor"
 
-	"github.com/RoLex/go-dcpp/hub"
+	"github.com/direct-connect/go-dcpp/hub"
 )
 
 const (

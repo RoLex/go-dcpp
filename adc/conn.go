@@ -10,9 +10,9 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/RoLex/go-dc/adc"
-	"github.com/RoLex/go-dc/keyprint"
-	"github.com/RoLex/go-dc/keyprint/tlskp"
+	"github.com/direct-connect/go-dc/adc"
+	"github.com/direct-connect/go-dc/keyprint"
+	"github.com/direct-connect/go-dc/keyprint/tlskp"
 )
 
 var (

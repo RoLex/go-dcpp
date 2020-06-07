@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	adcp "github.com/RoLex/go-dc/adc"
-	"github.com/RoLex/go-dcpp/adc"
-	"github.com/RoLex/go-dcpp/version"
+	adcp "github.com/direct-connect/go-dc/adc"
+	"github.com/direct-connect/go-dcpp/adc"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 // DialHub connects to a hub and runs a handshake.

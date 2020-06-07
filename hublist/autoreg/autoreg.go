@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	nmdcp "github.com/RoLex/go-dc/nmdc"
-	"github.com/RoLex/go-dcpp/version"
+	nmdcp "github.com/direct-connect/go-dc/nmdc"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 const DefaultPort = 2501

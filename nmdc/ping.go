@@ -13,9 +13,9 @@ import (
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/htmlindex"
 
-	"github.com/RoLex/go-dc/nmdc"
-	"github.com/RoLex/go-dc/types"
-	"github.com/RoLex/go-dcpp/version"
+	"github.com/direct-connect/go-dc/nmdc"
+	"github.com/direct-connect/go-dc/types"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 var (
@@ -355,11 +355,11 @@ func Ping(ctx context.Context, addr string, conf PingConfig) (_ *HubInfo, gerr e
 				Mode:           nmdc.UserModeActive,
 				HubsNormal:     conf.Hubs,
 				HubsRegistered: 1,
-				HubsOperator:   2,
+				HubsOperator:   0,
 				Slots:          conf.Slots,
 				ShareSize:      conf.Share,
 				Conn:           "100",
-				Flag:           nmdc.FlagStatusNormal,
+				Flag:           nmdc.FlagStatusServer,
 			})
 			if err != nil {
 				return &hub, err

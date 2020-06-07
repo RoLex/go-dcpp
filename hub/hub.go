@@ -13,9 +13,9 @@ import (
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/htmlindex"
 
-	"github.com/RoLex/go-dc/types"
-	"github.com/RoLex/go-dcpp/internal/safe"
-	"github.com/RoLex/go-dcpp/version"
+	"github.com/direct-connect/go-dc/types"
+	"github.com/direct-connect/go-dcpp/internal/safe"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 type Config struct {

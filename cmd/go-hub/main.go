@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/RoLex/go-dcpp/cmd/go-hub/cmd"
+	"github.com/direct-connect/go-dcpp/cmd/go-hub/cmd"
 )
 
 func main() {

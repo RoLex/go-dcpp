@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/blang/semver"
-	"github.com/RoLex/go-dcpp/version"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 // ReleaseInfo contains an information about a specific software release.

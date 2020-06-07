@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-	"github.com/RoLex/go-dc/types"
+	"github.com/direct-connect/go-dc/types"
 )
 
 var localhostIP = net.ParseIP("127.0.0.1")

@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/RoLex/go-dcpp/hub"
+	"github.com/direct-connect/go-dcpp/hub"
 )
 
 func init() {

@@ -3,7 +3,7 @@ package hub
 import (
 	"context"
 
-	"github.com/RoLex/go-dc/tiger"
+	"github.com/direct-connect/go-dc/tiger"
 )
 
 type TTH = tiger.Hash

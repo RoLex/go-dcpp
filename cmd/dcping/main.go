@@ -18,12 +18,12 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/text/encoding/htmlindex"
 
-	adcp "github.com/RoLex/go-dc/adc"
-	dc "github.com/RoLex/go-dcpp"
-	"github.com/RoLex/go-dcpp/adc"
-	"github.com/RoLex/go-dcpp/hublist"
-	"github.com/RoLex/go-dcpp/nmdc"
-	"github.com/RoLex/go-dcpp/version"
+	adcp "github.com/direct-connect/go-dc/adc"
+	dc "github.com/direct-connect/go-dcpp"
+	"github.com/direct-connect/go-dcpp/adc"
+	"github.com/direct-connect/go-dcpp/hublist"
+	"github.com/direct-connect/go-dcpp/nmdc"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 const Version = version.Vers

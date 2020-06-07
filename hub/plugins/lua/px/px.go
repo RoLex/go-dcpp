@@ -2,9 +2,9 @@ package px
 
 import (
 	lua "github.com/Shopify/go-lua"
-	"github.com/RoLex/go-dc/nmdc"
-	"github.com/RoLex/go-dcpp/hub"
-	hlua "github.com/RoLex/go-dcpp/hub/plugins/lua"
+	"github.com/direct-connect/go-dc/nmdc"
+	"github.com/direct-connect/go-dcpp/hub"
+	hlua "github.com/direct-connect/go-dcpp/hub/plugins/lua"
 )
 
 func init() {

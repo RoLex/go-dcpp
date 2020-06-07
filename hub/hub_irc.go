@@ -11,8 +11,8 @@ import (
 
 	"github.com/go-irc/irc"
 
-	"github.com/RoLex/go-dc/types"
-	"github.com/RoLex/go-dcpp/version"
+	"github.com/direct-connect/go-dc/types"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 const (

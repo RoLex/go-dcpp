@@ -5,7 +5,7 @@ import (
 	"net"
 	"sync"
 
-	"github.com/RoLex/go-dcpp/internal/safe"
+	"github.com/direct-connect/go-dcpp/internal/safe"
 )
 
 type connAddr interface {

@@ -12,12 +12,12 @@ import (
 	"sync"
 	"time"
 
-	adcp "github.com/RoLex/go-dc/adc"
-	"github.com/RoLex/go-dc/adc/types"
-	"github.com/RoLex/go-dc/tiger"
-	dctypes "github.com/RoLex/go-dc/types"
-	"github.com/RoLex/go-dcpp/adc"
-	"github.com/RoLex/go-dcpp/internal/safe"
+	adcp "github.com/direct-connect/go-dc/adc"
+	"github.com/direct-connect/go-dc/adc/types"
+	"github.com/direct-connect/go-dc/tiger"
+	dctypes "github.com/direct-connect/go-dc/types"
+	"github.com/direct-connect/go-dcpp/adc"
+	"github.com/direct-connect/go-dcpp/internal/safe"
 )
 
 const searchTimeout = time.Minute

@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	nmdcp "github.com/RoLex/go-dc/nmdc"
-	"github.com/RoLex/go-dc/types"
-	"github.com/RoLex/go-dcpp/nmdc"
-	"github.com/RoLex/go-dcpp/version"
+	nmdcp "github.com/direct-connect/go-dc/nmdc"
+	"github.com/direct-connect/go-dc/types"
+	"github.com/direct-connect/go-dcpp/nmdc"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 // DialHub connects to a hub and runs a handshake.

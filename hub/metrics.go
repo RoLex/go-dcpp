@@ -3,7 +3,7 @@ package hub
 import (
 	"time"
 
-	"github.com/RoLex/go-dc/nmdc"
+	"github.com/direct-connect/go-dc/nmdc"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"

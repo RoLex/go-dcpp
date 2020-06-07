@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	adcp "github.com/RoLex/go-dc/adc"
-	"github.com/RoLex/go-dcpp/adc"
+	adcp "github.com/direct-connect/go-dc/adc"
+	"github.com/direct-connect/go-dcpp/adc"
 )
 
 var (

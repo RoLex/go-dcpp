@@ -210,7 +210,7 @@ const indexTemplate = `<!DOCTYPE html>
 	</style>
 </head>
 <body>
-	<a href="https://github.com/RoLex/go-dcpp">
+	<a href="https://github.com/direct-connect/go-dcpp">
 		<img src="icon.png">
 	</a>
 	<div>

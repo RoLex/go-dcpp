@@ -16,13 +16,13 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	_ "github.com/RoLex/go-dcpp/hub/plugins/all"
+	_ "github.com/direct-connect/go-dcpp/hub/plugins/all"
 
-	"github.com/RoLex/go-dcpp/adc"
-	"github.com/RoLex/go-dcpp/hub"
-	"github.com/RoLex/go-dcpp/hub/hubdb"
-	"github.com/RoLex/go-dcpp/nmdc"
-	"github.com/RoLex/go-dcpp/version"
+	"github.com/direct-connect/go-dcpp/adc"
+	"github.com/direct-connect/go-dcpp/hub"
+	"github.com/direct-connect/go-dcpp/hub/hubdb"
+	"github.com/direct-connect/go-dcpp/nmdc"
+	"github.com/direct-connect/go-dcpp/version"
 )
 
 const Version = version.Vers

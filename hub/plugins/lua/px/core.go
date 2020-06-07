@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/RoLex/go-dc/nmdc"
-	"github.com/RoLex/go-dc/types"
-	"github.com/RoLex/go-dcpp/hub"
-	hlua "github.com/RoLex/go-dcpp/hub/plugins/lua"
+	"github.com/direct-connect/go-dc/nmdc"
+	"github.com/direct-connect/go-dc/types"
+	"github.com/direct-connect/go-dcpp/hub"
+	hlua "github.com/direct-connect/go-dcpp/hub/plugins/lua"
 
 	lua "github.com/Shopify/go-lua"
 )

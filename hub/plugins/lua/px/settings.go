@@ -3,7 +3,7 @@ package px
 import (
 	"strings"
 
-	"github.com/RoLex/go-dcpp/hub"
+	"github.com/direct-connect/go-dcpp/hub"
 
 	lua "github.com/Shopify/go-lua"
 )

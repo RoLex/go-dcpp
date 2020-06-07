@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cretz/bine/tor"
-	adcp "github.com/RoLex/go-dc/adc"
-	"github.com/RoLex/go-dcpp/adc"
+	adcp "github.com/direct-connect/go-dc/adc"
+	"github.com/direct-connect/go-dcpp/adc"
 )
 
 const torHubPort = 1411

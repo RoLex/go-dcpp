@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/RoLex/go-dc/adc"
-	"github.com/RoLex/go-dc/adc/types"
+	"github.com/direct-connect/go-dc/adc"
+	"github.com/direct-connect/go-dc/adc/types"
 )
 
 type PingHubInfo struct {

@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/RoLex/go-dcpp/nmdc"
-	"github.com/RoLex/go-dcpp/nmdc/client"
+	"github.com/direct-connect/go-dcpp/nmdc"
+	"github.com/direct-connect/go-dcpp/nmdc/client"
 
 	"github.com/stretchr/testify/require"
 )

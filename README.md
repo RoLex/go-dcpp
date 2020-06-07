@@ -1,6 +1,6 @@
 # GoHub
 
-[![Github Release](https://img.shields.io/github/release/direct-connect/go-dcpp.svg)](https://github.com/RoLex/go-dcpp/releases)
+[![Github Release](https://img.shields.io/github/release/direct-connect/go-dcpp.svg)](https://github.com/direct-connect/go-dcpp/releases)
 
 Direct Connect hub implementation for ADC and NMDC protocols (and beyond).
 
