@@ -52,6 +52,10 @@ type Config struct {
 	Owner   string `yaml:"owner"`
 	Website string `yaml:"website"`
 	Email   string `yaml:"email"`
+	Bot     struct {
+		Name string     `yaml:"name"`
+		Desc string     `yaml:"desc"`
+	} `yaml:"bot"`
 	MOTD    string `yaml:"motd"`
 	Private bool   `yaml:"private"`
 	Serve   struct {
@@ -183,6 +187,8 @@ func init() {
 			Owner:            conf.Owner,
 			Website:          conf.Website,
 			Email:            conf.Email,
+			BotName:          conf.Bot.Name,
+			BotDesc:          conf.Bot.Desc,
 			MOTD:             conf.MOTD,
 			Private:          conf.Private,
 			FallbackEncoding: conf.Chat.Encoding,

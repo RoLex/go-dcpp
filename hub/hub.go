@@ -26,6 +26,8 @@ type Config struct {
 	Owner            string
 	Website          string
 	Email            string
+	BotName          string
+	BotDesc          string
 	Private          bool
 	Keyprint         string
 	Soft             types.Software
@@ -57,6 +59,12 @@ func NewHub(conf Config) (*Hub, error) {
 	}
 	if conf.Topic == "" {
 		conf.Topic = conf.Desc
+	}
+	if conf.BotName == "" {
+		conf.BotName = "GoBot"
+	}
+	if conf.BotDesc == "" {
+		conf.BotDesc = "Hub security"
 	}
 	if conf.MOTD == "" {
 		conf.MOTD = "Welcome!"
@@ -93,7 +101,7 @@ func NewHub(conf Config) (*Hub, error) {
 		return true
 	})
 
-	h.hubUser, err = h.newBot(conf.Name, conf.Desc, conf.Email, UserHub, conf.Soft)
+	h.hubUser, err = h.newBot(conf.BotName, conf.BotDesc, conf.Email, UserHub, conf.Soft)
 	if err != nil {
 		return nil, err
 	}
@@ -256,6 +264,8 @@ type Stats struct {
 	Icon     string         `json:"icon,omitempty"`
 	Owner    string         `json:"owner,omitempty"`
 	Website  string         `json:"website,omitempty"`
+	BotName  string         `json:"botname,omitempty"`
+	BotDesc  string         `json:"botdesc,omitempty"`
 	Email    string         `json:"email,omitempty"`
 	Users    int            `json:"users"`
 	MaxUsers int            `json:"max-users,omitempty"`
@@ -289,6 +299,8 @@ func (h *Hub) Stats() Stats {
 		Owner:    h.conf.Owner,
 		Website:  h.conf.Website,
 		Email:    h.conf.Email,
+		BotName:  h.conf.BotName,
+		BotDesc:  h.conf.BotDesc,
 		Private:  h.conf.Private,
 		Icon:     "icon.png",
 		Users:    users,
@@ -327,6 +339,27 @@ func (h *Hub) getName() string {
 	return name
 }
 
+func (h *Hub) getDesc() string {
+	h.conf.RLock()
+	desc := h.conf.Desc
+	h.conf.RUnlock()
+	return desc
+}
+
+func (h *Hub) getBotName() string {
+	h.conf.RLock()
+	name := h.conf.BotName
+	h.conf.RUnlock()
+	return name
+}
+
+func (h *Hub) getBotDesc() string {
+	h.conf.RLock()
+	desc := h.conf.BotDesc
+	h.conf.RUnlock()
+	return desc
+}
+
 func (h *Hub) getTopic() string {
 	h.conf.RLock()
 	topic := h.conf.Topic
@@ -354,12 +387,25 @@ func (h *Hub) setName(name string) {
 	h.conf.Lock()
 	h.conf.Name = name
 	h.conf.Unlock()
+	// TODO: rename the hub
+}
+
+func (h *Hub) setBotName(name string) {
+	h.conf.Lock()
+	h.conf.BotName = name
+	h.conf.Unlock()
 	// TODO: rename the hub bot
 }
 
 func (h *Hub) setDesc(desc string) {
 	h.conf.Lock()
 	h.conf.Desc = desc
+	h.conf.Unlock()
+}
+
+func (h *Hub) setBotDesc(desc string) {
+	h.conf.Lock()
+	h.conf.BotDesc = desc
 	h.conf.Unlock()
 }
 

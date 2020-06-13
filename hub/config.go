@@ -13,6 +13,8 @@ const (
 	ConfigHubOwner   = "hub.owner"
 	ConfigHubWebsite = "hub.website"
 	ConfigHubEmail   = "hub.email"
+	ConfigBotName    = "bot.name"
+	ConfigBotDesc    = "bot.desc"
 	ConfigHubMOTD    = "hub.motd"
 	ConfigHubPrivate = "hub.private"
 
@@ -33,6 +35,8 @@ var configAliases = map[string]string{
 	"owner":   ConfigHubOwner,
 	"website": ConfigHubWebsite,
 	"email":   ConfigHubEmail,
+	"botname": ConfigBotName,
+	"botdesc": ConfigBotDesc,
 	"motd":    ConfigHubMOTD,
 	"private": ConfigHubPrivate,
 }
@@ -144,6 +148,8 @@ func (h *Hub) ConfigKeys() []string {
 		ConfigHubOwner,
 		ConfigHubWebsite,
 		ConfigHubEmail,
+		ConfigBotName,
+		ConfigBotDesc,
 		ConfigHubPrivate,
 		ConfigChatGlobalEnabled,
 		ConfigZlibLevel,
@@ -174,7 +180,9 @@ func (h *Hub) GetConfig(key string) (interface{}, bool) {
 		ConfigHubMOTD,
 		ConfigHubOwner,
 		ConfigHubWebsite,
-		ConfigHubEmail:
+		ConfigHubEmail,
+		ConfigBotName,
+		ConfigBotDesc:
 		v, ok := h.GetConfigString(key)
 		if !ok {
 			return nil, false
@@ -228,6 +236,10 @@ func (h *Hub) setConfigString(key string, val string) {
 		h.conf.Lock()
 		h.conf.Email = val
 		h.conf.Unlock()
+	case ConfigBotName:
+		h.setBotName(val)
+	case ConfigBotDesc:
+		h.setBotDesc(val)
 	default:
 		h.setConfigMap(key, val)
 	}
@@ -246,10 +258,7 @@ func (h *Hub) GetConfigString(key string) (string, bool) {
 	case ConfigHubName:
 		return h.getName(), true
 	case ConfigHubDesc:
-		h.conf.RLock()
-		v := h.conf.Owner
-		h.conf.RUnlock()
-		return v, true
+		return h.getDesc(), true
 	case ConfigHubTopic:
 		h.conf.RLock()
 		v := h.conf.Topic
@@ -275,6 +284,10 @@ func (h *Hub) GetConfigString(key string) (string, bool) {
 		v := h.conf.Email
 		h.conf.RUnlock()
 		return v, true
+	case ConfigBotName:
+		return h.getBotName(), true
+	case ConfigBotDesc:
+		return h.getBotDesc(), true
 	default:
 		v, ok := h.getConfigMap(key)
 		if !ok || v == nil {

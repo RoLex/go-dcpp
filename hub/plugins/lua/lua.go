@@ -60,7 +60,169 @@ func (p *plugin) Version() hub.Version {
 
 func (p *plugin) Init(h *hub.Hub, path string) error {
 	p.h = h
+
+	h.RegisterCommand(hub.Command{
+		Menu: []string{"Load Lua script"},
+		Name: "luaload", Aliases: []string{"luaon"},
+		Short: "Load Lua script",
+		Require: hub.PermOwner,
+		Func:  p.cmdLuaLoad,
+	})
+
+	h.RegisterCommand(hub.Command{
+		Menu: []string{"Unload Lua script"},
+		Name: "luaunload", Aliases: []string{"luaoff"},
+		Short: "Unload Lua script",
+		Require: hub.PermOwner,
+		Func:  p.cmdLuaUnload,
+	})
+
+	h.RegisterCommand(hub.Command{
+		Menu: []string{"Reload Lua script"},
+		Name: "luareload", Aliases: []string{"luare"},
+		Short: "Reload Lua script",
+		Require: hub.PermOwner,
+		Func:  p.cmdLuaReload,
+	})
+
+	h.RegisterCommand(hub.Command{
+		Menu: []string{"List loaded Lua scripts"},
+		Name: "lualist", Aliases: []string{"luaall"},
+		Short: "List loaded Lua scripts",
+		Require: hub.PermOwner,
+		Func:  p.cmdLuaList,
+	})
+
 	return p.loadScripts(path)
+}
+
+func (p *plugin) cmdLuaLoad(peer hub.Peer, args string) error {
+	path := args
+
+	if path == "" {
+		_ = peer.HubChatMsg(hub.Message{Text: "Missing script name or path"})
+		return nil
+	}
+
+	if !strings.Contains(path, string(os.PathSeparator)) {
+		path = filepath.Join("scripts", path)
+	}
+
+	if p.isScriptLoaded(path) {
+		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script already loaded: %s", path)})
+		return nil
+	}
+
+	lua, err := p.loadScript(path)
+
+	if err != nil {
+		return fmt.Errorf("Failed to load Lua script: %v", err)
+	}
+
+	name := lua.getString("script", "name")
+	vers := lua.getString("script", "version")
+
+	if name != "" && vers != "" {
+		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully loaded: %s %s", name, vers)})
+	} else {
+		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully loaded: %s", path)})
+	}
+
+	return nil
+}
+
+func (p *plugin) cmdLuaUnload(peer hub.Peer, args string) error {
+	path := args
+
+	if path == "" {
+		_ = peer.HubChatMsg(hub.Message{Text: "Missing script name or path"})
+		return nil
+	}
+
+	if !strings.Contains(path, string(os.PathSeparator)) {
+		path = filepath.Join("scripts", path)
+	}
+
+	if !p.isScriptLoaded(path) {
+		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script not loaded: %s", path)})
+		return nil
+	}
+
+	err := p.unloadScript(path)
+
+	if err != nil {
+		return fmt.Errorf("Failed to unload Lua script: %v", err)
+	}
+
+	_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully unloaded: %s", path)})
+	return nil
+}
+
+func (p *plugin) cmdLuaReload(peer hub.Peer, args string) error {
+	path := args
+
+	if path == "" {
+		_ = peer.HubChatMsg(hub.Message{Text: "Missing script name or path"})
+		return nil
+	}
+
+	if !strings.Contains(path, string(os.PathSeparator)) {
+		path = filepath.Join("scripts", path)
+	}
+
+	if !p.isScriptLoaded(path) {
+		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script not loaded: %s", path)})
+		return nil
+	}
+
+	err := p.unloadScript(path)
+
+	if err != nil {
+		return fmt.Errorf("Failed to unload Lua script: %v", err)
+	}
+
+	_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully unloaded: %s", path)})
+	lua, err := p.loadScript(path)
+
+	if err != nil {
+		return fmt.Errorf("Failed to load Lua script: %v", err)
+	}
+
+	name := lua.getString("script", "name")
+	vers := lua.getString("script", "version")
+
+	if name != "" && vers != "" {
+		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully loaded: %s %s", name, vers)})
+	} else {
+		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully loaded: %s", path)})
+	}
+
+	return nil
+}
+
+func (p *plugin) cmdLuaList(peer hub.Peer, args string) error {
+	list := ""
+
+	for _, lua := range p.scripts {
+		list += " " + lua.Name()
+		name := lua.getString("script", "name")
+		vers := lua.getString("script", "version")
+
+		if name != "" && vers != "" {
+			list += " (" + name + " " + vers + ")"
+		}
+
+		list += "\r\n"
+	}
+
+	if list != "" {
+		list = "Loaded Lua scripts:\r\n\r\n" + list
+	} else {
+		list = "No Lua scripts are loaded."
+	}
+
+	_ = peer.HubChatMsg(hub.Message{Text: list})
+	return nil
 }
 
 func (p *plugin) loadScripts(path string) error {
@@ -114,6 +276,31 @@ func (p *plugin) loadScript(path string) (*Script, error) {
 	}
 	p.scripts[path] = s
 	return s, nil
+}
+
+func (p *plugin) unloadScript(path string) error {
+	if p.isScriptLoaded(path) { // todo: error checks
+		lua := p.scripts[path]
+		lua.mu.Lock()
+		lua.s = nil
+		lua.p = nil
+		lua.mu.Unlock()
+		delete(p.scripts, path)
+	}
+
+	return nil
+}
+
+func (p *plugin) isScriptLoaded(n string) bool {
+	for _, s := range p.scripts {
+		name := s.Name()
+
+		if name == n {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (p *plugin) Close() error {

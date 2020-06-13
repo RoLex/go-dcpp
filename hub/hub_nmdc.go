@@ -1475,7 +1475,7 @@ func (p *nmdcPeer) HubChatMsg(m Message) error {
 		return errConnectionClosed
 	}
 	if m.Name == "" {
-		m.Name = p.hub.getName()
+		m.Name = p.hub.getBotName()
 	}
 	if m.Me && !strings.HasPrefix(m.Text, "/me") {
 		m.Text = "/me " + m.Text
