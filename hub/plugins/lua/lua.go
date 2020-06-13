@@ -113,14 +113,14 @@ func (p *plugin) cmdLuaLoad(peer hub.Peer, args string) error {
 		return nil
 	}
 
-	lua, err := p.loadScript(path)
+	s, err := p.loadScript(path)
 
 	if err != nil {
 		return fmt.Errorf("Failed to load Lua script: %v", err)
 	}
 
-	name := lua.getString("script", "name")
-	vers := lua.getString("script", "version")
+	name := s.getString("script", "name")
+	vers := s.getString("script", "version")
 
 	if name != "" && vers != "" {
 		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully loaded: %s %s", name, vers)})
@@ -182,14 +182,14 @@ func (p *plugin) cmdLuaReload(peer hub.Peer, args string) error {
 	}
 
 	_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully unloaded: %s", path)})
-	lua, err := p.loadScript(path)
+	s, err := p.loadScript(path)
 
 	if err != nil {
 		return fmt.Errorf("Failed to load Lua script: %v", err)
 	}
 
-	name := lua.getString("script", "name")
-	vers := lua.getString("script", "version")
+	name := s.getString("script", "name")
+	vers := s.getString("script", "version")
 
 	if name != "" && vers != "" {
 		_ = peer.HubChatMsg(hub.Message{Text: fmt.Sprintf("Lua script successfully loaded: %s %s", name, vers)})
@@ -203,10 +203,10 @@ func (p *plugin) cmdLuaReload(peer hub.Peer, args string) error {
 func (p *plugin) cmdLuaList(peer hub.Peer, args string) error {
 	list := ""
 
-	for _, lua := range p.scripts {
-		list += " " + lua.Name()
-		name := lua.getString("script", "name")
-		vers := lua.getString("script", "version")
+	for _, s := range p.scripts {
+		list += " " + s.Name()
+		name := s.getString("script", "name")
+		vers := s.getString("script", "version")
 
 		if name != "" && vers != "" {
 			list += " (" + name + " " + vers + ")"
@@ -280,11 +280,11 @@ func (p *plugin) loadScript(path string) (*Script, error) {
 
 func (p *plugin) unloadScript(path string) error {
 	if p.isScriptLoaded(path) { // todo: error checks
-		lua := p.scripts[path]
-		lua.mu.Lock()
-		lua.s = nil
-		lua.p = nil
-		lua.mu.Unlock()
+		s := p.scripts[path]
+		s.mu.Lock()
+		s.s = nil
+		s.p = nil
+		s.mu.Unlock()
 		delete(p.scripts, path)
 	}
 

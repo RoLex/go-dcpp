@@ -306,9 +306,17 @@ func (h *Hub) nmdcAccept(peer *nmdcPeer) error {
 	deadline := time.Now().Add(time.Second * 5)
 
 	c := peer.c
+	name := h.getName()
+	topic := h.getTopic()
+
+	if topic != "" {
+		name += " - " + topic
+	}
+
 	err := c.WriteMsg(&nmdcp.HubName{
-		String: nmdcp.String(h.getName()),
+		String: nmdcp.String(name),
 	})
+
 	if err != nil {
 		return err
 	}
@@ -407,10 +415,13 @@ func (h *Hub) nmdcAccept(peer *nmdcPeer) error {
 		return err
 	}
 	err = peer.HubChatMsg(Message{Text: h.poweredBy()})
+
 	if err != nil {
 		return err
 	}
+
 	err = h.sendMOTD(peer)
+
 	if err != nil {
 		return err
 	}

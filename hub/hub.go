@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net"
 	"strings"
 	"sync"
@@ -67,7 +68,7 @@ func NewHub(conf Config) (*Hub, error) {
 		conf.BotDesc = "Hub security"
 	}
 	if conf.MOTD == "" {
-		conf.MOTD = "Welcome!"
+		conf.MOTD = "motd.txt"
 	}
 	h := &Hub{
 		created: time.Now(),
@@ -372,13 +373,20 @@ func (h *Hub) getTopic() string {
 
 func (h *Hub) getMOTD() string {
 	h.conf.RLock()
-	motd := h.conf.MOTD
+	motd := ""
+
+	if data, err := ioutil.ReadFile(h.conf.MOTD); err == nil {
+		motd = string(data)
+	}
+
 	if motd == "" {
 		motd = h.conf.Desc
 	}
+
 	if motd == "" {
 		motd = h.conf.Topic
 	}
+
 	h.conf.RUnlock()
 	return motd
 }
@@ -807,8 +815,20 @@ func (h *Hub) privateChat(from, to Peer, m Message) {
 	_ = to.PrivateMsg(from, m)
 }
 
+func (h *Hub) replaceVars(peer Peer, data string) string { // todo: replace "%[" name "]"
+	back := data
+
+	back = strings.Replace(back, "%[HUB_NAME]", h.getName(), -1)
+	back = strings.Replace(back, "%[HUB_DESC]", h.getDesc(), -1)
+
+	back = strings.Replace(back, "%[USER_NAME]", peer.Name(), -1)
+	back = strings.Replace(back, "%[USER_ADDR]", addrString(peer.RemoteAddr()), -1)
+
+	return back
+}
+
 func (h *Hub) sendMOTD(peer Peer) error {
-	return peer.HubChatMsg(Message{Text: h.getMOTD()})
+	return peer.HubChatMsg(Message{Text: h.replaceVars(peer, h.getMOTD())})
 }
 
 func (h *Hub) leave(peer Peer, sid SID, notify []Peer) {

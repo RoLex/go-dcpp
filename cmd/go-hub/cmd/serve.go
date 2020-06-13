@@ -119,7 +119,7 @@ func init() {
 		viper.AddConfigPath("/etc/go-hub")
 	}
 	viper.SetConfigName("hub")
-	viper.SetDefault("motd", "Welcome!")
+	viper.SetDefault("motd", "motd.txt")
 	viper.SetDefault("private", false)
 	viper.SetDefault("chat.encoding", "cp1251")
 	viper.SetDefault("chat.log.max", 50)

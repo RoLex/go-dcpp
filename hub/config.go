@@ -265,10 +265,7 @@ func (h *Hub) GetConfigString(key string) (string, bool) {
 		h.conf.RUnlock()
 		return v, true
 	case ConfigHubMOTD:
-		h.conf.RLock()
-		v := h.conf.MOTD
-		h.conf.RUnlock()
-		return v, true
+		return h.getMOTD(), true
 	case ConfigHubOwner:
 		h.conf.RLock()
 		v := h.conf.Owner
