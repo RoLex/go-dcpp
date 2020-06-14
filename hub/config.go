@@ -225,17 +225,11 @@ func (h *Hub) setConfigString(key string, val string) {
 	case ConfigHubMOTD:
 		h.setMOTD(val)
 	case ConfigHubOwner:
-		h.conf.Lock()
-		h.conf.Owner = val
-		h.conf.Unlock()
+		h.setOwner(val)
 	case ConfigHubWebsite:
-		h.conf.Lock()
-		h.conf.Website = val
-		h.conf.Unlock()
+		h.setWebsite(val)
 	case ConfigHubEmail:
-		h.conf.Lock()
-		h.conf.Email = val
-		h.conf.Unlock()
+		h.setEmail(val)
 	case ConfigBotName:
 		h.setBotName(val)
 	case ConfigBotDesc:
@@ -267,20 +261,11 @@ func (h *Hub) GetConfigString(key string) (string, bool) {
 	case ConfigHubMOTD:
 		return h.getMOTD(), true
 	case ConfigHubOwner:
-		h.conf.RLock()
-		v := h.conf.Owner
-		h.conf.RUnlock()
-		return v, true
+		return h.getOwner(), true
 	case ConfigHubWebsite:
-		h.conf.RLock()
-		v := h.conf.Website
-		h.conf.RUnlock()
-		return v, true
+		return h.getWebsite(), true
 	case ConfigHubEmail:
-		h.conf.RLock()
-		v := h.conf.Email
-		h.conf.RUnlock()
-		return v, true
+		return h.getEmail(), true
 	case ConfigBotName:
 		return h.getBotName(), true
 	case ConfigBotDesc:

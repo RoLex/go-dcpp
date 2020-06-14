@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net"
 	"strings"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -270,11 +271,11 @@ type Stats struct {
 	Email    string         `json:"email,omitempty"`
 	Users    int            `json:"users"`
 	MaxUsers int            `json:"max-users,omitempty"`
-	Share    uint64         `json:"share"`               // MB
-	MaxShare uint64         `json:"max-share,omitempty"` // MB
+	Share    uint64         `json:"share"`
+	Shared   string         `json:"shared"`
 	Enc      string         `json:"encoding,omitempty"`
 	Soft     types.Software `json:"soft"`
-	Uptime   uint64         `json:"uptime,omitempty"`
+	Uptime   uint64         `json:"uptime,omitempty"` // todo: human
 	Keyprint string         `json:"-"`
 }
 
@@ -290,9 +291,6 @@ func (h *Hub) Uptime() time.Duration {
 }
 
 func (h *Hub) Stats() Stats {
-	h.peers.RLock()
-	users := len(h.peers.byName)
-	h.peers.RUnlock()
 	h.conf.RLock()
 	st := Stats{
 		Name:     h.conf.Name,
@@ -304,12 +302,13 @@ func (h *Hub) Stats() Stats {
 		BotDesc:  h.conf.BotDesc,
 		Private:  h.conf.Private,
 		Icon:     "icon.png",
-		Users:    users,
-		Share:    uint64(atomic.LoadInt64(&h.peers.share)),
+		Users:    h.getUsers(),
+		Share:    h.getShare(),
+		Shared:   byteToHuman(h.getShare()),
 		Enc:      "utf-8",
 		Soft:     h.conf.Soft,
 		Keyprint: h.conf.Keyprint,
-		Uptime:   uint64(h.Uptime().Seconds()),
+		Uptime:   h.getUptime(),
 	}
 	if h.conf.Addr != "" {
 		st.Addr = append(st.Addr, h.conf.Addr)
@@ -371,6 +370,45 @@ func (h *Hub) getTopic() string {
 	return topic
 }
 
+func (h *Hub) getOwner() string {
+	h.conf.RLock()
+	own := h.conf.Owner
+	h.conf.RUnlock()
+	return own
+}
+
+func (h *Hub) getWebsite() string {
+	h.conf.RLock()
+	web := h.conf.Website
+	h.conf.RUnlock()
+	return web
+}
+
+func (h *Hub) getEmail() string {
+	h.conf.RLock()
+	web := h.conf.Email
+	h.conf.RUnlock()
+	return web
+}
+
+func (h *Hub) getUsers() int {
+	h.peers.RLock()
+	num := len(h.peers.byName)
+	h.peers.RUnlock()
+	return num
+}
+
+func (h *Hub) getShare() uint64 {
+	h.peers.RLock()
+	shar := uint64(atomic.LoadInt64(&h.peers.share) * shareDiv)
+	h.peers.RUnlock()
+	return shar
+}
+
+func (h *Hub) getUptime() uint64 {
+	return uint64(h.Uptime().Seconds())
+}
+
 func (h *Hub) getMOTD() string {
 	h.conf.RLock()
 	motd := ""
@@ -391,24 +429,11 @@ func (h *Hub) getMOTD() string {
 	return motd
 }
 
-func (h *Hub) setName(name string) {
-	h.conf.Lock()
-	h.conf.Name = name
-	h.conf.Unlock()
-	// TODO: rename the hub
-}
-
 func (h *Hub) setBotName(name string) {
 	h.conf.Lock()
 	h.conf.BotName = name
 	h.conf.Unlock()
 	// TODO: rename the hub bot
-}
-
-func (h *Hub) setDesc(desc string) {
-	h.conf.Lock()
-	h.conf.Desc = desc
-	h.conf.Unlock()
 }
 
 func (h *Hub) setBotDesc(desc string) {
@@ -417,11 +442,42 @@ func (h *Hub) setBotDesc(desc string) {
 	h.conf.Unlock()
 }
 
+func (h *Hub) setName(name string) {
+	h.conf.Lock()
+	h.conf.Name = name
+	h.conf.Unlock()
+	// TODO: rename the hub
+}
+
+func (h *Hub) setDesc(desc string) {
+	h.conf.Lock()
+	h.conf.Desc = desc
+	h.conf.Unlock()
+}
+
 func (h *Hub) setTopic(topic string) {
 	h.conf.Lock()
 	h.conf.Topic = topic
 	h.conf.Unlock()
 	h.broadcastTopic(topic)
+}
+
+func (h *Hub) setOwner(own string) {
+	h.conf.Lock()
+	h.conf.Owner = own
+	h.conf.Unlock()
+}
+
+func (h *Hub) setWebsite(web string) {
+	h.conf.Lock()
+	h.conf.Website = web
+	h.conf.Unlock()
+}
+
+func (h *Hub) setEmail(mail string) {
+	h.conf.Lock()
+	h.conf.Email = mail
+	h.conf.Unlock()
 }
 
 func (h *Hub) setMOTD(motd string) {
@@ -815,16 +871,60 @@ func (h *Hub) privateChat(from, to Peer, m Message) {
 	_ = to.PrivateMsg(from, m)
 }
 
-func (h *Hub) replaceVars(peer Peer, data string) string { // todo: replace "%[" name "]"
-	back := data
+func byteToHuman(b uint64) string {
+	const unit = 1024 // todo: bits is 1000
 
-	back = strings.Replace(back, "%[HUB_NAME]", h.getName(), -1)
-	back = strings.Replace(back, "%[HUB_DESC]", h.getDesc(), -1)
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
 
-	back = strings.Replace(back, "%[USER_NAME]", peer.Name(), -1)
-	back = strings.Replace(back, "%[USER_ADDR]", addrString(peer.RemoteAddr()), -1)
+	div, exp := uint64(unit), 0
 
-	return back
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+
+	return fmt.Sprintf("%.2f %ciB", float64(b) / float64(div), "KMGTPE"[exp]) // todo: number of decimals, optional speed suffix
+}
+
+func (h *Hub) replaceVars(peer Peer, data string) string {
+	var hubTrigVars = map[string]string{ // hub variables, todo: add more
+		"NAME":    h.getName(),
+		"DESC":    h.getDesc(),
+		"TOPIC":   h.getTopic(),
+		"OWNER":   h.getOwner(),
+		"WEB":     h.getWebsite(),
+		"EMAIL":   h.getEmail(),
+		"USERS":   strconv.FormatInt(int64(h.getUsers()), 10),
+		"SHARE":   byteToHuman(h.getShare()),
+		"UPTIME":  strconv.FormatUint(h.getUptime(), 10), // todo: human readable conversion in order se,mi,ho,da,ww,mo,ye
+		"APP":     version.HubName,
+		"VERS":    version.Vers,
+	}
+
+	var userTrigVars = map[string]string{ // user variables, todo: add more
+		"ADDR":    addrString(peer.RemoteAddr()),
+		"NAME":    peer.Name(),
+		"DESC":    peer.UserInfo().Desc,
+		"EMAIL":   peer.UserInfo().Email,
+		"SHARE":   byteToHuman(peer.UserInfo().Share),
+	}
+
+	var vars []string
+
+	for k, v := range hubTrigVars {
+		vars = append(vars, "%[HUB_" + k + "]")
+		vars = append(vars, v)
+	}
+
+	for k, v := range userTrigVars {
+		vars = append(vars, "%[USER_" + k + "]")
+		vars = append(vars, v)
+	}
+
+	r := strings.NewReplacer(vars...)
+	return r.Replace(data) // strings.Replace(data, "%[HUB_NAME]", h.getName(), -1)
 }
 
 func (h *Hub) sendMOTD(peer Peer) error {

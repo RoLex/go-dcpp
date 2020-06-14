@@ -133,7 +133,23 @@ func init() {
 	viper.SetDefault("plugins.path", "plugins")
 
 	if _, err := os.Stat(motd); os.IsNotExist(err) { // create motd
-		err = ioutil.WriteFile(motd, []byte("Welcome %[USER_NAME] @ %[USER_ADDR] to %[HUB_NAME]!"), 0600)
+		err = ioutil.WriteFile(motd, []byte(`
+
+ .:: Welcome %[USER_NAME] to %[HUB_NAME]
+
+ .:: Hub information ::.
+
+ .:: Online users: %[HUB_USERS]
+ .:: Total share: %[HUB_SHARE]
+ .:: Uptime: %[HUB_UPTIME]
+
+ .:: Your information ::.
+
+ .:: IP address: %[USER_ADDR]
+ .:: Share size: %[USER_SHARE]
+
+ .:: Don't forget to add this hub to favorites: /fav
+`), 0600)
 
 		if err != nil {
 			log.Printf("Failed to create %s: %v\n", motd, err)
