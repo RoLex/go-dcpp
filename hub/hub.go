@@ -276,7 +276,8 @@ type Stats struct {
 	Shared   string         `json:"shared"`
 	Enc      string         `json:"encoding,omitempty"`
 	Soft     types.Software `json:"soft"`
-	Uptime   uint64         `json:"uptime,omitempty"` // todo: human
+	Uptime   uint64         `json:"uptime,omitempty"`
+	Uptimes  string         `json:"uptimes,omitempty"`
 	Keyprint string         `json:"-"`
 }
 
@@ -289,6 +290,16 @@ func (st *Stats) DefaultAddr() string {
 
 func (h *Hub) Uptime() time.Duration {
 	return time.Since(h.created)
+}
+
+func (h *Hub) fixUptime(u string) string {
+	up := u
+
+	if i := strings.LastIndexByte(up, '.'); i > 0 {
+		up = up[:i] + "s"
+	}
+
+	return up
 }
 
 func (h *Hub) Stats() Stats {
@@ -311,7 +322,8 @@ func (h *Hub) Stats() Stats {
 		Enc:      "utf-8",
 		Soft:     h.conf.Soft,
 		Keyprint: h.conf.Keyprint,
-		Uptime:   h.getUptime(),
+		Uptime:   uint64(h.Uptime().Seconds()),
+		Uptimes:  h.fixUptime(h.Uptime().String()),
 	}
 
 	if h.conf.Addr != "" {
@@ -410,10 +422,6 @@ func (h *Hub) getShare() uint64 {
 	return shar
 }
 
-func (h *Hub) getUptime() uint64 {
-	return uint64(h.Uptime().Seconds())
-}
-
 func (h *Hub) getMOTD() string {
 	h.conf.RLock()
 	motd := h.conf.MOTD
@@ -503,11 +511,7 @@ func (h *Hub) setMOTD(motd string) {
 
 func (h *Hub) poweredBy() string {
 	soft := h.getSoft()
-	uptime := h.Uptime().String()
-	if i := strings.LastIndexByte(uptime, '.'); i > 0 {
-		uptime = uptime[:i] + "s"
-	}
-	return strings.Join([]string{"Powered by", soft.Name, soft.Version, "(uptime:", uptime + ")"}, " ")
+	return strings.Join([]string{"Powered by", soft.Name, soft.Version, "(uptime:", h.fixUptime(h.Uptime().String()) + ")"}, " ")
 }
 
 func (h *Hub) ListenAndServe(addr string) error {
@@ -913,7 +917,7 @@ func (h *Hub) replaceVars(peer Peer, data string) string {
 		"EMAIL":   h.getEmail(),
 		"USERS":   strconv.FormatInt(int64(h.getUsers()), 10),
 		"SHARE":   byteToHuman(h.getShare()),
-		"UPTIME":  strconv.FormatUint(h.getUptime(), 10), // todo: human readable conversion in order se,mi,ho,da,ww,mo,ye
+		"UPTIME":  h.fixUptime(h.Uptime().String()),
 		"APP":     version.HubName,
 		"VERS":    version.Vers,
 	}
