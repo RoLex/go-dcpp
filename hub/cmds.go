@@ -62,12 +62,21 @@ const (
 func (h *Hub) initCommands() {
 	h.cmds.byName = make(map[string]*Command)
 	h.cmds.names = make(map[string]struct{})
+
 	h.RegisterCommand(Command{
 		Menu: []string{"Help"},
 		Name: "help", Aliases: []string{"h"},
 		Short: "show the list of commands or a help for a specific command",
 		Func:  h.cmdHelp,
 	})
+
+	h.RegisterCommand(Command{
+		Menu: []string{"Show MOTD"},
+		Name: "motd",
+		Short: "Show MOTD",
+		Func:  h.cmdMOTD,
+	})
+
 	h.RegisterCommand(Command{
 		Name: "history", Aliases: []string{"log"},
 		Short: "replay chat log history",
@@ -249,6 +258,10 @@ func (h *Hub) cmdHelp(p Peer, args string) error {
 	}
 	h.cmdOutput(p, buf.String())
 	return nil
+}
+
+func (h *Hub) cmdMOTD(p Peer, args string) error {
+	return h.sendMOTD(p)
 }
 
 func (h *Hub) cmdChatLog(p Peer, args string) error {

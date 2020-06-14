@@ -34,6 +34,7 @@ type Config struct {
 	Keyprint         string
 	Soft             types.Software
 	MOTD             string
+	TextMOTD         string
 	ChatLog          int
 	ChatLogJoin      int
 	FallbackEncoding string
@@ -292,6 +293,8 @@ func (h *Hub) Uptime() time.Duration {
 
 func (h *Hub) Stats() Stats {
 	h.conf.RLock()
+	shar := h.getShare()
+
 	st := Stats{
 		Name:     h.conf.Name,
 		Desc:     h.conf.Desc,
@@ -303,16 +306,18 @@ func (h *Hub) Stats() Stats {
 		Private:  h.conf.Private,
 		Icon:     "icon.png",
 		Users:    h.getUsers(),
-		Share:    h.getShare(),
-		Shared:   byteToHuman(h.getShare()),
+		Share:    shar,
+		Shared:   byteToHuman(shar),
 		Enc:      "utf-8",
 		Soft:     h.conf.Soft,
 		Keyprint: h.conf.Keyprint,
 		Uptime:   h.getUptime(),
 	}
+
 	if h.conf.Addr != "" {
 		st.Addr = append(st.Addr, h.conf.Addr)
 	}
+
 	h.conf.RUnlock()
 	st.Addr = append(st.Addr, h.addrs...)
 	return st
@@ -411,10 +416,20 @@ func (h *Hub) getUptime() uint64 {
 
 func (h *Hub) getMOTD() string {
 	h.conf.RLock()
+	motd := h.conf.MOTD
+	h.conf.RUnlock()
+	return motd
+}
+
+func (h *Hub) getTextMOTD() string {
+	h.conf.RLock()
 	motd := ""
 
-	if data, err := ioutil.ReadFile(h.conf.MOTD); err == nil {
+	if h.conf.TextMOTD != "" {
+		motd = h.conf.TextMOTD
+	} else if data, err := ioutil.ReadFile(h.conf.MOTD); err == nil { // read only once
 		motd = string(data)
+		h.conf.TextMOTD = motd
 	}
 
 	if motd == "" {
@@ -928,7 +943,7 @@ func (h *Hub) replaceVars(peer Peer, data string) string {
 }
 
 func (h *Hub) sendMOTD(peer Peer) error {
-	return peer.HubChatMsg(Message{Text: h.replaceVars(peer, h.getMOTD())})
+	return peer.HubChatMsg(Message{Text: h.replaceVars(peer, h.getTextMOTD())})
 }
 
 func (h *Hub) leave(peer Peer, sid SID, notify []Peer) {
