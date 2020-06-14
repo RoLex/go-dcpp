@@ -8,6 +8,7 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
+	"io/ioutil"
 	"runtime"
 	"strconv"
 
@@ -115,11 +116,14 @@ func readConfig(create bool) (*Config, hub.Map, error) {
 
 func init() {
 	viper.AddConfigPath(".")
+
 	if runtime.GOOS != "windows" {
 		viper.AddConfigPath("/etc/go-hub")
 	}
+
+	motd := "motd.txt" // motd file name
 	viper.SetConfigName("hub")
-	viper.SetDefault("motd", "motd.txt")
+	viper.SetDefault("motd", motd)
 	viper.SetDefault("private", false)
 	viper.SetDefault("chat.encoding", "cp1251")
 	viper.SetDefault("chat.log.max", 50)
@@ -127,6 +131,14 @@ func init() {
 	viper.SetDefault("database.type", "bolt")
 	viper.SetDefault("database.path", "hub.db")
 	viper.SetDefault("plugins.path", "plugins")
+
+	if _, err := os.Stat(motd); os.IsNotExist(err) { // create motd
+		err = ioutil.WriteFile(motd, []byte("Welcome %[USER_NAME] @ %[USER_ADDR] to %[HUB_NAME]!"), 0600)
+
+		if err != nil {
+			fmt.Println("Failed to create MOTD:", motd)
+		}
+	}
 
 	initCmd.RunE = func(cmd *cobra.Command, args []string) error {
 		if err := initConfig(defaultConfig); err != nil {

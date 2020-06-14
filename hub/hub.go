@@ -376,7 +376,7 @@ func (h *Hub) getMOTD() string {
 	motd := ""
 
 	if data, err := ioutil.ReadFile(h.conf.MOTD); err == nil {
-		motd = string(data) // todo: remove last \r
+		motd = string(data)
 	}
 
 	if motd == "" {
