@@ -226,31 +226,52 @@ func (h *Hub) nmdcHandshake(c *nmdc.Conn, cinfo *ConnInfo) (*nmdcPeer, error) {
 
 	peer := newNMDC(h, cinfo, c, fea, nick, addr.IP)
 
-	if peer.fea.Has(nmdcp.ExtBotINFO) {
+	if peer.fea.Has(nmdcp.ExtBotINFO) { // its a pinger
 		cntPings.Add(1)
 		cntPingsNMDC.Add(1)
-		// it's a pinger - don't bother binding the nickname
 		peer.fea.Set(nmdcp.ExtHubINFO)
-
 		err = h.nmdcAccept(peer)
+
 		if err != nil {
 			return nil, err
 		}
+
 		var bot nmdcp.BotINFO
+
 		if err := c.ReadMsgTo(deadline, &bot); err != nil {
 			return nil, err
 		}
+
 		st := h.Stats()
-		err = c.WriteMsg(&nmdcp.HubINFO{
+
+		if st.Icon != "" { // seticon
+			err = c.WriteMsg(&nmdcp.SetIcon{String: nmdcp.String(st.Icon)})
+
+			if err == nil {
+				err = c.Flush()
+			}
+		}
+
+		if st.Logo != "" { // setlogo
+			err = c.WriteMsg(&nmdcp.SetLogo{String: nmdcp.String(st.Logo)})
+
+			if err == nil {
+				err = c.Flush()
+			}
+		}
+
+		err = c.WriteMsg(&nmdcp.HubINFO{ // hubinfo
 			Name:     st.Name,
 			Desc:     st.Desc,
 			Host:     st.DefaultAddr(),
 			Soft:     st.Soft,
 			Encoding: "UTF-8",
 		})
+
 		if err == nil {
 			err = c.Flush()
 		}
+
 		return nil, err
 	}
 

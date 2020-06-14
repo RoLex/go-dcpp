@@ -28,6 +28,8 @@ type Config struct {
 	Owner            string
 	Website          string
 	Email            string
+	Icon             string
+	Logo             string
 	BotName          string
 	BotDesc          string
 	Private          bool
@@ -69,9 +71,15 @@ func NewHub(conf Config) (*Hub, error) {
 	if conf.BotDesc == "" {
 		conf.BotDesc = "Hub security"
 	}
+
 	if conf.MOTD == "" {
 		conf.MOTD = "motd.txt"
 	}
+
+	if conf.Icon == "" {
+		conf.Icon = "icon.png"
+	}
+
 	h := &Hub{
 		created: time.Now(),
 		closed:  make(chan struct{}),
@@ -264,12 +272,13 @@ type Stats struct {
 	Desc     string         `json:"desc,omitempty"`
 	Addr     []string       `json:"addr,omitempty"`
 	Private  bool           `json:"private,omitempty"`
-	Icon     string         `json:"icon,omitempty"`
 	Owner    string         `json:"owner,omitempty"`
 	Website  string         `json:"website,omitempty"`
+	Email    string         `json:"email,omitempty"`
+	Icon     string         `json:"icon,omitempty"`
+	Logo     string         `json:"logo,omitempty"`
 	BotName  string         `json:"botname,omitempty"`
 	BotDesc  string         `json:"botdesc,omitempty"`
-	Email    string         `json:"email,omitempty"`
 	Users    int            `json:"users"`
 	MaxUsers int            `json:"max-users,omitempty"`
 	Share    uint64         `json:"share"`
@@ -312,10 +321,11 @@ func (h *Hub) Stats() Stats {
 		Owner:    h.conf.Owner,
 		Website:  h.conf.Website,
 		Email:    h.conf.Email,
+		Icon:     h.conf.Icon,
+		Logo:     h.conf.Logo,
 		BotName:  h.conf.BotName,
 		BotDesc:  h.conf.BotDesc,
 		Private:  h.conf.Private,
-		Icon:     "icon.png",
 		Users:    h.getUsers(),
 		Share:    shar,
 		Shared:   byteToHuman(shar),
@@ -406,6 +416,20 @@ func (h *Hub) getEmail() string {
 	web := h.conf.Email
 	h.conf.RUnlock()
 	return web
+}
+
+func (h *Hub) getIcon() string {
+	h.conf.RLock()
+	icon := h.conf.Icon
+	h.conf.RUnlock()
+	return icon
+}
+
+func (h *Hub) getLogo() string {
+	h.conf.RLock()
+	logo := h.conf.Logo
+	h.conf.RUnlock()
+	return logo
 }
 
 func (h *Hub) getUsers() int {
@@ -500,6 +524,18 @@ func (h *Hub) setWebsite(web string) {
 func (h *Hub) setEmail(mail string) {
 	h.conf.Lock()
 	h.conf.Email = mail
+	h.conf.Unlock()
+}
+
+func (h *Hub) setIcon(icon string) {
+	h.conf.Lock()
+	h.conf.Icon = icon
+	h.conf.Unlock()
+}
+
+func (h *Hub) setLogo(logo string) {
+	h.conf.Lock()
+	h.conf.Logo = logo
 	h.conf.Unlock()
 }
 

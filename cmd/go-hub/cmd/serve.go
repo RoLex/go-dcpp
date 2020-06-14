@@ -53,6 +53,8 @@ type Config struct {
 	Owner   string `yaml:"owner"`
 	Website string `yaml:"website"`
 	Email   string `yaml:"email"`
+	Icon    string `yaml:"icon"`
+	Logo    string `yaml:"logo"`
 	Bot     struct {
 		Name string     `yaml:"name"`
 		Desc string     `yaml:"desc"`
@@ -124,6 +126,7 @@ func init() {
 	motd := "motd.txt" // motd file name
 	viper.SetConfigName("hub")
 	viper.SetDefault("motd", motd)
+	viper.SetDefault("icon", "icon.png")
 	viper.SetDefault("private", false)
 	viper.SetDefault("chat.encoding", "cp1251")
 	viper.SetDefault("chat.log.max", 50)
@@ -215,6 +218,8 @@ func init() {
 			Owner:            conf.Owner,
 			Website:          conf.Website,
 			Email:            conf.Email,
+			Icon:             conf.Icon,
+			Logo:             conf.Logo,
 			BotName:          conf.Bot.Name,
 			BotDesc:          conf.Bot.Desc,
 			MOTD:             conf.MOTD,
