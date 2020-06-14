@@ -136,7 +136,7 @@ func init() {
 		err = ioutil.WriteFile(motd, []byte("Welcome %[USER_NAME] @ %[USER_ADDR] to %[HUB_NAME]!"), 0600)
 
 		if err != nil {
-			fmt.Println("Failed to create MOTD:", motd)
+			log.Printf("Failed to create %s: %v\n", motd, err)
 		}
 	}
 
