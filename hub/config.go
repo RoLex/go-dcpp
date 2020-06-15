@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+
+	"github.com/spf13/viper"
 )
 
 const (
@@ -15,10 +17,12 @@ const (
 	ConfigHubEmail   = "hub.email"
 	ConfigHubIcon    = "hub.icon"
 	ConfigHubLogo    = "hub.logo"
-	ConfigBotName    = "bot.name"
-	ConfigBotDesc    = "bot.desc"
 	ConfigHubMOTD    = "hub.motd"
 	ConfigHubPrivate = "hub.private"
+	ConfigBotName    = "bot.name"
+	ConfigBotDesc    = "bot.desc"
+	ConfigOpChatName = "opchat.name"
+	ConfigOpChatDesc = "opchat.desc"
 
 	ConfigChatGlobalEnabled = "chat.global.enabled"
 )
@@ -30,19 +34,23 @@ const (
 	ConfigADCRedirectTLS  = "adc.redirect.tls"
 )
 
+var confManager *viper.Viper // pointer to config manager
+
 var configAliases = map[string]string{
-	"name":    ConfigHubName,
-	"desc":    ConfigHubDesc,
-	"topic":   ConfigHubTopic,
-	"owner":   ConfigHubOwner,
-	"website": ConfigHubWebsite,
-	"email":   ConfigHubEmail,
-	"icon":    ConfigHubIcon,
-	"logo":    ConfigHubLogo,
+	"hubname":    ConfigHubName,
+	"hubdesc":    ConfigHubDesc,
+	"hubtopic":   ConfigHubTopic,
+	"hubowner":   ConfigHubOwner,
+	"hubwebsite": ConfigHubWebsite,
+	"hubemail":   ConfigHubEmail,
+	"hubicon":    ConfigHubIcon,
+	"hublogo":    ConfigHubLogo,
 	"botname": ConfigBotName,
 	"botdesc": ConfigBotDesc,
-	"motd":    ConfigHubMOTD,
-	"private": ConfigHubPrivate,
+	"opchatname": ConfigOpChatName,
+	"opchatdesc": ConfigOpChatDesc,
+	"hubmotd":    ConfigHubMOTD,
+	"hubprivate": ConfigHubPrivate,
 }
 
 // configIgnored is a list of ignored config keys that can only be set in the config file.
@@ -84,7 +92,17 @@ func (h *Hub) saveConfig(key string, val interface{}) {
 	if _, ok := configIgnored[key]; ok {
 		return
 	}
-	// TODO: persist config
+
+	if alias, ok := configAliases[key]; ok {
+		key = alias
+	}
+
+	confManager.Set(key, val)
+	confManager.WriteConfig(); // todo: check error
+}
+
+func (h *Hub) setConfigManager(v *viper.Viper) {
+	confManager = v
 }
 
 func (h *Hub) setConfigMap(key string, val interface{}) {
@@ -156,6 +174,8 @@ func (h *Hub) ConfigKeys() []string {
 		ConfigHubLogo,
 		ConfigBotName,
 		ConfigBotDesc,
+		ConfigOpChatName,
+		ConfigOpChatDesc,
 		ConfigHubPrivate,
 		ConfigChatGlobalEnabled,
 		ConfigZlibLevel,
@@ -190,7 +210,9 @@ func (h *Hub) GetConfig(key string) (interface{}, bool) {
 		ConfigHubIcon,
 		ConfigHubLogo,
 		ConfigBotName,
-		ConfigBotDesc:
+		ConfigBotDesc,
+		ConfigOpChatName,
+		ConfigOpChatDesc:
 		v, ok := h.GetConfigString(key)
 		if !ok {
 			return nil, false
@@ -246,6 +268,10 @@ func (h *Hub) setConfigString(key string, val string) {
 		h.setBotName(val)
 	case ConfigBotDesc:
 		h.setBotDesc(val)
+	case ConfigOpChatName:
+		h.setOpChatName(val)
+	case ConfigOpChatDesc:
+		h.setOpChatDesc(val)
 	default:
 		h.setConfigMap(key, val)
 	}
@@ -286,6 +312,10 @@ func (h *Hub) GetConfigString(key string) (string, bool) {
 		return h.getBotName(), true
 	case ConfigBotDesc:
 		return h.getBotDesc(), true
+	case ConfigOpChatName:
+		return h.getOpChatName(), true
+	case ConfigOpChatDesc:
+		return h.getOpChatDesc(), true
 	default:
 		v, ok := h.getConfigMap(key)
 		if !ok || v == nil {

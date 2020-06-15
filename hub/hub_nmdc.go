@@ -265,6 +265,7 @@ func (h *Hub) nmdcHandshake(c *nmdc.Conn, cinfo *ConnInfo) (*nmdcPeer, error) {
 			Desc:     st.Desc,
 			Host:     st.DefaultAddr(),
 			Soft:     st.Soft,
+			Owner:    st.Owner,
 			Encoding: "UTF-8",
 		})
 
@@ -467,30 +468,44 @@ func (h *Hub) nmdcAccept(peer *nmdcPeer) error {
 	if err != nil {
 		return err
 	}
+
 	var ops, bots nmdcp.Names
+
 	if u := peer.User(); u != nil && u.Has(FlagOpIcon) {
 		ops = append(ops, peer.Name())
 	}
+
 	for _, p := range peers {
 		if u := p.User(); u != nil && u.Has(FlagOpIcon) {
 			ops = append(ops, p.Name())
 		}
+
+		info := p.UserInfo()
+
+		if info.Kind == UserOpBot || info.Kind == UserOpHub {
+			ops = append(ops, p.Name())
+		}
+
 		if peer.ext.botlist {
-			if info := p.UserInfo(); info.Kind == UserBot || info.Kind == UserHub {
+			if info.Kind == UserBot || info.Kind == UserHub || info.Kind == UserOpBot || info.Kind == UserOpHub {
 				bots = append(bots, p.Name())
 			}
 		}
 	}
+
 	err = c.WriteMsg(&nmdcp.OpList{Names: ops})
+
 	if err != nil {
 		return err
 	}
+
 	if peer.ext.botlist && len(bots) != 0 {
 		err = c.WriteMsg(&nmdcp.BotList{Names: bots})
 		if err != nil {
 			return err
 		}
 	}
+
 	if peer.ext.userip2 {
 		err = c.WriteMsg(&nmdcp.UserIP{
 			List: []nmdcp.UserAddress{{

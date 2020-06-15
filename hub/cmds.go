@@ -192,6 +192,18 @@ func (h *Hub) initCommands() {
 		Func:    h.cmdListBanIP,
 	})
 
+	// hub control
+	h.RegisterCommand(Command{
+		Name:    "stop",
+		Aliases: []string{"quit"},
+		Short:   "Stop hub",
+		Menu:    []string{"Stop hub"},
+		Require: PermOwner,
+		Func:    h.cmdStop,
+	})
+
+	// todo: restart
+
 	// Redirects
 	h.RegisterCommand(Command{
 		Name:    "redirect",
@@ -594,6 +606,11 @@ func (h *Hub) cmdListBanIP(p Peer, args string) error {
 	})
 	h.cmdOutput(p, buf.String())
 	return nil
+}
+
+func (h *Hub) cmdStop(p Peer, args string) error { // todo: timer argument, ex: 1h, 5m
+	h.SendGlobalChat("Stopping hub")
+	return h.Close()
 }
 
 func (h *Hub) cmdRedirectUser(p, p2 Peer, args string) error {

@@ -14,6 +14,7 @@ import (
 
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/htmlindex"
+	"github.com/spf13/viper"
 
 	"github.com/direct-connect/go-dc/types"
 	"github.com/direct-connect/go-dcpp/internal/safe"
@@ -32,6 +33,8 @@ type Config struct {
 	Logo             string
 	BotName          string
 	BotDesc          string
+	OpChatName       string
+	OpChatDesc       string
 	Private          bool
 	Keyprint         string
 	Soft             types.Software
@@ -43,7 +46,7 @@ type Config struct {
 	TLS              *tls.Config
 }
 
-func NewHub(conf Config) (*Hub, error) {
+func NewHub(conf Config, v *viper.Viper) (*Hub, error) {
 	if conf.Name == "" {
 		conf.Name = "GoHub"
 	}
@@ -65,11 +68,21 @@ func NewHub(conf Config) (*Hub, error) {
 	if conf.Topic == "" {
 		conf.Topic = conf.Desc
 	}
+
 	if conf.BotName == "" {
 		conf.BotName = "GoBot"
 	}
+
 	if conf.BotDesc == "" {
 		conf.BotDesc = "Hub security"
+	}
+
+	if conf.OpChatName == "" {
+		conf.OpChatName = "GoChat"
+	}
+
+	if conf.OpChatDesc == "" {
+		conf.OpChatDesc = "Operator room"
 	}
 
 	if conf.MOTD == "" {
@@ -85,6 +98,8 @@ func NewHub(conf Config) (*Hub, error) {
 		closed:  make(chan struct{}),
 		tls:     conf.TLS,
 	}
+
+	h.setConfigManager(v)
 	h.conf.Config = conf
 	h.conf.private = conf.Private
 	h.setZlibLevel(-1)
@@ -103,16 +118,18 @@ func NewHub(conf Config) (*Hub, error) {
 	h.rooms.init()
 	h.globalChat = h.newRoomSys("", "")
 	var err error
-	h.opChat, err = h.NewPermRoom("OpChat", PermRoomsOpChat)
+	h.opChat, err = h.NewPermRoom(conf.OpChatName, PermRoomsOpChat)
+
 	if err != nil {
 		panic(err)
 	}
+
 	h.OnPermJoined(PermRoomsOpChat, func(p Peer) bool {
 		h.opChat.Join(p)
 		return true
 	})
 
-	h.hubUser, err = h.newBot(conf.BotName, conf.BotDesc, conf.Email, UserHub, conf.Soft)
+	h.hubUser, err = h.newBot(conf.BotName, conf.BotDesc, conf.Email, UserOpHub, conf.Soft)
 	if err != nil {
 		return nil, err
 	}
@@ -279,6 +296,8 @@ type Stats struct {
 	Logo     string         `json:"logo,omitempty"`
 	BotName  string         `json:"botname,omitempty"`
 	BotDesc  string         `json:"botdesc,omitempty"`
+	OpChatName string       `json:"opchatname,omitempty"`
+	OpChatDesc string       `json:"opchatdesc,omitempty"`
 	Users    int            `json:"users"`
 	MaxUsers int            `json:"max-users,omitempty"`
 	Share    uint64         `json:"share"`
@@ -325,6 +344,8 @@ func (h *Hub) Stats() Stats {
 		Logo:     h.conf.Logo,
 		BotName:  h.conf.BotName,
 		BotDesc:  h.conf.BotDesc,
+		OpChatName: h.conf.OpChatName,
+		OpChatDesc: h.conf.OpChatDesc,
 		Private:  h.conf.Private,
 		Users:    h.getUsers(),
 		Share:    shar,
@@ -383,6 +404,20 @@ func (h *Hub) getBotName() string {
 func (h *Hub) getBotDesc() string {
 	h.conf.RLock()
 	desc := h.conf.BotDesc
+	h.conf.RUnlock()
+	return desc
+}
+
+func (h *Hub) getOpChatName() string {
+	h.conf.RLock()
+	name := h.conf.OpChatName
+	h.conf.RUnlock()
+	return name
+}
+
+func (h *Hub) getOpChatDesc() string {
+	h.conf.RLock()
+	desc := h.conf.OpChatDesc
 	h.conf.RUnlock()
 	return desc
 }
@@ -486,6 +521,19 @@ func (h *Hub) setBotName(name string) {
 func (h *Hub) setBotDesc(desc string) {
 	h.conf.Lock()
 	h.conf.BotDesc = desc
+	h.conf.Unlock()
+}
+
+func (h *Hub) setOpChatName(name string) {
+	h.conf.Lock()
+	h.conf.OpChatName = name
+	h.conf.Unlock()
+	// TODO: rename the opchat
+}
+
+func (h *Hub) setOpChatDesc(desc string) {
+	h.conf.Lock()
+	h.conf.OpChatDesc = desc
 	h.conf.Unlock()
 }
 
@@ -1051,6 +1099,8 @@ const (
 	UserNormal = UserKind(iota)
 	UserHub
 	UserBot
+	UserOpHub
+	UserOpBot
 )
 
 type UserInfo struct {
