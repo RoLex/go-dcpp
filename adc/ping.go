@@ -52,6 +52,9 @@ func Ping(ctx context.Context, addr string, conf PingConfig) (*PingHubInfo, erro
 		adc.FeaONID: true,
 		adc.FeaASCH: true,
 		adc.FeaNAT0: true,
+		adc.FeaADCS: true,
+		adc.FeaADC0: true,
+		adc.FeaLOLZ: true,
 		// TODO: anything else?
 	}
 

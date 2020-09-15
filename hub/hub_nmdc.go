@@ -1210,9 +1210,11 @@ func (u UserInfo) toNMDC() nmdcp.MyINFO {
 	}
 	conn := "100"                // TODO
 	mode := nmdcp.UserModeActive // TODO
-	if u.Kind == UserBot || u.Kind == UserHub {
+
+	if u.Kind == UserBot || u.Kind == UserHub || u.Kind == UserOpBot || u.Kind == UserOpHub {
 		conn = "" // empty conn indicates a bot
 	}
+
 	return nmdcp.MyINFO{
 		Name:           u.Name,
 		Client:         u.App,

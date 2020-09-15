@@ -342,6 +342,7 @@ http://%s%s
 		go func() {
 			<-ch
 			log.Println("stopping server")
+			h.SendGlobalChat("Stopping hub")
 			_ = h.Close()
 		}()
 
