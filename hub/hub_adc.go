@@ -230,6 +230,8 @@ func (h *Hub) adcStageProtocol(c *adc.Conn, cinfo *ConnInfo) (*adcPeer, error) {
 		adcp.FeaUCMD: true,
 		adcp.FeaUCM0: true,
 		adcp.FeaZLIF: true,
+		adcp.FeaADCS: true,
+		adcp.FeaADC0: true,
 	}
 
 	mutual := hubFeatures.Intersect(sup.Features)
